@@ -7,21 +7,10 @@
 const STORAGE_KEY = 'studyAppData';
 
 const SPECIES = [
-  { id: 'dragon', name: 'ドラゴン', desc: '卵から伝説の竜へ', type: 'svg',
-    labels: (typeof DRAGON_STAGE_LABELS !== 'undefined' ? DRAGON_STAGE_LABELS : ['卵', '幼竜', '若竜', '伝説の竜']),
-    thresholds: [1, 3, 6, 9] },
-  { id: 'cat', name: 'ネコ', desc: '子猫から百獣の王へ', type: 'photo',
-    images: ['assets/characters/cat/1.jpg', 'assets/characters/cat/2.jpg', 'assets/characters/cat/3.jpg', 'assets/characters/cat/4.jpg'],
-    labels: ['子猫', '成猫', '虎', 'ライオン'],
-    thresholds: [1, 3, 6, 9] },
-  { id: 'plant', name: 'しょくぶつ', desc: '芽から満開の花へ', type: 'photo',
-    images: ['assets/characters/plant/1.jpg', 'assets/characters/plant/2.jpg', 'assets/characters/plant/3.jpg', 'assets/characters/plant/4.jpg'],
-    labels: ['新芽', '若葉', '大樹', '満開'],
-    thresholds: [1, 3, 6, 9] },
-  { id: 'bird', name: 'ひよこ', desc: 'ひよこから大空の王者へ', type: 'photo',
-    images: ['assets/characters/bird/1.jpg', 'assets/characters/bird/2.jpg', 'assets/characters/bird/3.jpg', 'assets/characters/bird/4.jpg'],
-    labels: ['ひよこ', '若鳥', '鷲', 'フクロウ'],
-    thresholds: [1, 3, 6, 9] },
+  { id: 'dragon', name: 'ドラゴン', desc: '卵から伝説の竜へ', svgFn: dragonSvg, labels: DRAGON_STAGE_LABELS },
+  { id: 'cat', name: 'ネコ', desc: '子猫から百獣の王へ', svgFn: catSvg, labels: CAT_STAGE_LABELS },
+  { id: 'plant', name: 'しょくぶつ', desc: '種から満開の花へ', svgFn: plantSvg, labels: PLANT_STAGE_LABELS },
+  { id: 'bird', name: 'ひよこ', desc: '卵から大空の王者へ', svgFn: birdSvg, labels: BIRD_STAGE_LABELS },
 ];
 
 const MAX_STAGE = 10;
@@ -135,23 +124,12 @@ function speciesDef(id) {
   return SPECIES.find(s => s.id === id);
 }
 
-function formIndexForStage(def, stage) {
-  let idx = 0;
-  def.thresholds.forEach((t, i) => { if (stage >= t) idx = i; });
-  return idx;
-}
-
 function charVisualMarkup(def, stage, uid) {
-  const idx = formIndexForStage(def, Math.max(1, stage));
-  if (def.type === 'svg') {
-    return dragonSvg(idx + 1, uid);
-  }
-  return `<div class="photo-frame"><img src="${def.images[idx]}" alt="${def.name} ${def.labels[idx]}"></div>`;
+  return def.svgFn(Math.max(1, Math.min(MAX_STAGE, stage)), uid);
 }
 
 function charLabel(def, stage) {
-  const idx = formIndexForStage(def, Math.max(1, stage));
-  return def.labels[idx];
+  return def.labels[Math.max(1, Math.min(MAX_STAGE, stage)) - 1];
 }
 
 function applyEvolution(rate) {
@@ -550,13 +528,10 @@ function renderEvoGallery() {
 
   const def = speciesDef(data.character.species);
   const stage = data.character.stage;
-  const currentFormIdx = formIndexForStage(def, stage);
 
-  const items = def.thresholds.map((t, i) => {
-    const nextThreshold = def.thresholds[i + 1] || (MAX_STAGE + 1);
-    const rangeLabel = (t === nextThreshold - 1) ? `Lv.${t}` : `Lv.${t}〜${nextThreshold - 1}`;
-    const unlocked = stage >= t;
-    return { t, i, rangeLabel, unlocked, isCurrent: i === currentFormIdx };
+  const items = Array.from({ length: MAX_STAGE }, (_, i) => {
+    const s = i + 1;
+    return { s, unlocked: stage >= s, isCurrent: stage === s };
   });
 
   gallery.innerHTML = `
@@ -564,9 +539,9 @@ function renderEvoGallery() {
     <div class="evo-gallery-row">
       ${items.map(it => `
         <div class="evo-stage-item ${it.unlocked ? 'unlocked' : 'locked'} ${it.isCurrent ? 'current' : ''}">
-          <div class="evo-stage-thumb">${it.unlocked ? charVisualMarkup(def, it.t, `gallery-${def.id}-${it.i}`) : '<div class="evo-locked-icon">🔒</div>'}</div>
-          <div class="evo-stage-label">${it.unlocked ? def.labels[it.i] : '？？？'}</div>
-          <div class="evo-stage-range">${it.rangeLabel}</div>
+          <div class="evo-stage-thumb">${it.unlocked ? charVisualMarkup(def, it.s, `gallery-${def.id}-${it.s}`) : '<div class="evo-locked-icon">🔒</div>'}</div>
+          <div class="evo-stage-label">${it.unlocked ? def.labels[it.s - 1] : '？？？'}</div>
+          <div class="evo-stage-range">Lv.${it.s}</div>
         </div>
       `).join('')}
     </div>

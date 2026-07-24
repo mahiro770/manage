@@ -110,23 +110,6 @@ h1, h2 { margin: 0 0 8px; letter-spacing: -0.02em; }
   animation: heroFloat 4.5s ease-in-out infinite;
 }
 .char-hero-stage svg { width: 100%; height: 100%; overflow: visible; }
-.char-hero-stage .photo-frame {
-  width: 152px;
-  height: 152px;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg), 0 0 0 6px rgba(255,255,255,0.5);
-  position: relative;
-}
-@media (prefers-color-scheme: dark) {
-  .char-hero-stage .photo-frame { box-shadow: var(--shadow-lg), 0 0 0 6px rgba(255,255,255,0.06); }
-}
-.char-hero-stage .photo-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  animation: kenBurns 12s ease-in-out infinite alternate;
-}
 .char-hero-placeholder {
   font-size: 3.4rem;
   opacity: 0.5;
@@ -134,10 +117,6 @@ h1, h2 { margin: 0 0 8px; letter-spacing: -0.02em; }
 @keyframes heroFloat {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
-}
-@keyframes kenBurns {
-  0% { transform: scale(1) translate(0, 0); }
-  100% { transform: scale(1.08) translate(-1.5%, -1%); }
 }
 
 .char-hero-info { position: relative; z-index: 1; margin-top: 14px; }
@@ -223,35 +202,41 @@ h1, h2 { margin: 0 0 8px; letter-spacing: -0.02em; }
 }
 
 /* ===========================================================
-   Dragon SVG animation
+   Creature SVG animation (shared by all species)
 =========================================================== */
-.dr-body-breathe { animation: drBreathe 3.4s ease-in-out infinite; transform-box: view-box; }
-@keyframes drBreathe {
+.cg-breathe { animation: cgBreathe 3.4s ease-in-out infinite; transform-box: view-box; }
+@keyframes cgBreathe {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.032); }
 }
-.dr-wing-l { animation: drFlapL 2.8s ease-in-out infinite; transform-box: view-box; }
-.dr-wing-r { animation: drFlapR 2.8s ease-in-out infinite; transform-box: view-box; }
-@keyframes drFlapL { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
-@keyframes drFlapR { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(9deg); } }
-.dr-eye { animation: drBlink 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes drBlink {
+.cg-wing-l, .cg-limb-l { animation: cgSwayL 2.8s ease-in-out infinite; transform-box: view-box; }
+.cg-wing-r, .cg-limb-r { animation: cgSwayR 2.8s ease-in-out infinite; transform-box: view-box; }
+@keyframes cgSwayL { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
+@keyframes cgSwayR { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(9deg); } }
+.cg-eye { animation: cgBlink 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes cgBlink {
   0%, 92%, 100% { transform: scaleY(1); }
   95% { transform: scaleY(0.12); }
 }
-.dr-glow-pulse { animation: drPulse 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes drPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.85; } }
-.dr-flame { animation: drFlicker 0.55s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
-@keyframes drFlicker { from { transform: scale(0.88) translateY(1px); } to { transform: scale(1.18) translateY(-1px); } }
-.dr-steam circle { animation: drSteam 2.4s ease-in infinite; transform-box: fill-box; transform-origin: center; }
-.dr-steam circle:nth-child(2) { animation-delay: 0.5s; }
-.dr-steam circle:nth-child(3) { animation-delay: 1s; }
-@keyframes drSteam {
+.cg-glow { animation: cgPulse 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes cgPulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.85; } }
+.cg-flicker { animation: cgFlicker 0.55s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+@keyframes cgFlicker { from { transform: scale(0.88) translateY(1px); } to { transform: scale(1.18) translateY(-1px); } }
+.cg-steam circle { animation: cgSteam 2.4s ease-in infinite; transform-box: fill-box; transform-origin: center; }
+.cg-steam circle:nth-child(2) { animation-delay: 0.5s; }
+.cg-steam circle:nth-child(3) { animation-delay: 1s; }
+@keyframes cgSteam {
   0% { transform: translateY(0); opacity: 0.75; }
   100% { transform: translateY(-22px); opacity: 0; }
 }
-.dr-crack { animation: drCrackGlow 1.8s ease-in-out infinite; }
-@keyframes drCrackGlow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+.cg-crack { animation: cgCrackGlow 1.8s ease-in-out infinite; }
+@keyframes cgCrackGlow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+.cg-sway { animation: cgLeafSway 3.6s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+@keyframes cgLeafSway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(4deg); } }
+.cg-sparkle { animation: cgSparkle 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.cg-sparkle:nth-child(2) { animation-delay: 0.4s; }
+.cg-sparkle:nth-child(3) { animation-delay: 0.8s; }
+@keyframes cgSparkle { 0%, 100% { opacity: 0.3; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.1); } }
 
 /* ===========================================================
    Tabs
