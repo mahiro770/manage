@@ -511,6 +511,7 @@ function renderSettings() {
   document.getElementById('alarmEnabledInput').checked = data.settings.alarmEnabled;
   renderHeader();
   renderEvoGallery();
+  renderPreviewAllGallery();
 }
 
 /* ===========================================================
@@ -546,6 +547,40 @@ function renderEvoGallery() {
       `).join('')}
     </div>
   `;
+}
+
+/* ===========================================================
+   テスト用：全キャラクター進化プレビュー
+=========================================================== */
+
+let previewAllVisible = false;
+
+function renderPreviewAllGallery() {
+  const gallery = document.getElementById('previewAllGallery');
+  if (!gallery) return;
+
+  if (!previewAllVisible) {
+    gallery.innerHTML = '';
+    return;
+  }
+
+  gallery.innerHTML = SPECIES.map(def => `
+    <div class="preview-species-block">
+      <div class="preview-species-title">${def.name}</div>
+      <div class="preview-stage-row">
+        ${Array.from({ length: MAX_STAGE }, (_, i) => {
+          const s = i + 1;
+          return `
+            <div class="preview-stage-item">
+              <div class="preview-stage-thumb">${charVisualMarkup(def, s, `preview-${def.id}-${s}`)}</div>
+              <div class="preview-stage-lv">Lv.${s}</div>
+              <div class="preview-stage-label">${def.labels[s - 1]}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
 }
 
 /* ===========================================================
@@ -637,6 +672,12 @@ function initEvents() {
     }
   });
   document.getElementById('cancelCharSelectBtn').addEventListener('click', hideCharSelect);
+
+  document.getElementById('previewAllBtn').addEventListener('click', e => {
+    previewAllVisible = !previewAllVisible;
+    e.target.textContent = previewAllVisible ? '🔍 プレビューを隠す' : '🔍 全キャラクターの進化をプレビュー';
+    renderPreviewAllGallery();
+  });
 
   document.getElementById('saveSettingsBtn').addEventListener('click', () => {
     data.settings.wakeTime = document.getElementById('wakeTimeInput').value || '06:30';
