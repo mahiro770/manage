@@ -425,7 +425,12 @@ function buildSpeciesList(onPick) {
     const card = document.createElement('div');
     card.className = 'species-card';
     card.innerHTML = `
-      <div class="species-thumb">${charVisualMarkup(sp, 1, `card-${sp.id}`)}</div>
+      <div class="species-preview-pair">
+        <div class="species-thumb sm">${charVisualMarkup(sp, 1, `card-${sp.id}-start`)}</div>
+        <span class="species-arrow">→</span>
+        <div class="species-thumb sm final">${charVisualMarkup(sp, MAX_STAGE, `card-${sp.id}-final`)}</div>
+      </div>
+      <div class="species-preview-caption">進化後の姿もチラ見せ</div>
       <div class="species-name">${sp.name}</div>
       <div class="species-desc">${sp.desc}</div>
     `;
@@ -527,6 +532,45 @@ function renderSettings() {
   document.getElementById('sleepTimeInput').value = data.settings.sleepTime;
   document.getElementById('alarmEnabledInput').checked = data.settings.alarmEnabled;
   renderHeader();
+  renderEvoGallery();
+}
+
+/* ===========================================================
+   進化の過程ギャラリー
+=========================================================== */
+
+function renderEvoGallery() {
+  const gallery = document.getElementById('evoGallery');
+  if (!gallery) return;
+
+  if (!data.character.species) {
+    gallery.innerHTML = '';
+    return;
+  }
+
+  const def = speciesDef(data.character.species);
+  const stage = data.character.stage;
+  const currentFormIdx = formIndexForStage(def, stage);
+
+  const items = def.thresholds.map((t, i) => {
+    const nextThreshold = def.thresholds[i + 1] || (MAX_STAGE + 1);
+    const rangeLabel = (t === nextThreshold - 1) ? `Lv.${t}` : `Lv.${t}〜${nextThreshold - 1}`;
+    const unlocked = stage >= t;
+    return { t, i, rangeLabel, unlocked, isCurrent: i === currentFormIdx };
+  });
+
+  gallery.innerHTML = `
+    <div class="evo-gallery-title">進化の過程</div>
+    <div class="evo-gallery-row">
+      ${items.map(it => `
+        <div class="evo-stage-item ${it.unlocked ? 'unlocked' : 'locked'} ${it.isCurrent ? 'current' : ''}">
+          <div class="evo-stage-thumb">${it.unlocked ? charVisualMarkup(def, it.t, `gallery-${def.id}-${it.i}`) : '<div class="evo-locked-icon">🔒</div>'}</div>
+          <div class="evo-stage-label">${it.unlocked ? def.labels[it.i] : '？？？'}</div>
+          <div class="evo-stage-range">${it.rangeLabel}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 /* ===========================================================

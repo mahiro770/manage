@@ -613,8 +613,64 @@ h1, h2 { margin: 0 0 8px; letter-spacing: -0.02em; }
   background: rgba(0,0,0,0.03);
 }
 .species-thumb svg, .species-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.species-preview-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.species-thumb.sm {
+  width: 48px;
+  height: 48px;
+}
+.species-thumb.sm.final {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.species-arrow {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.species-preview-caption {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
 .species-name { font-weight: 700; margin-top: 8px; }
 .species-desc { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+/* Evolution gallery (settings tab) */
+.evo-gallery { margin: 16px 0; }
+.evo-gallery:empty { margin: 0; }
+.evo-gallery-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; }
+.evo-gallery-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 10px;
+}
+.evo-stage-item {
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 6px;
+  text-align: center;
+  transition: border-color 0.25s, transform 0.2s var(--ease-spring);
+}
+.evo-stage-item.current { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15); }
+.evo-stage-item.locked { opacity: 0.55; }
+.evo-stage-thumb {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.04);
+}
+.evo-stage-thumb svg, .evo-stage-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.evo-locked-icon { font-size: 1.3rem; opacity: 0.6; }
+.evo-stage-label { font-size: 0.72rem; font-weight: 600; margin-top: 6px; }
+.evo-stage-range { font-size: 0.62rem; color: var(--muted); margin-top: 1px; }
 .cancel-btn {
   margin-top: 10px;
   border: none;
