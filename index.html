@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習管理アプリ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- キャラクター選択オーバーレイ -->
+<div id="charSelectOverlay" class="overlay hidden">
+  <div class="overlay-box">
+    <h2>育てるキャラクターを選ぼう</h2>
+    <p class="sub">目標を達成するとキャラクターが進化します（全10段階）。達成率が80%を下回ると後退するので注意！</p>
+    <div id="speciesList" class="species-list"></div>
+    <p class="warn-text" id="resetWarning" style="display:none;">※キャラクターを変更すると、現在の進化段階は1に戻ります。</p>
+    <button id="cancelCharSelectBtn" class="cancel-btn" style="display:none;">キャンセル</button>
+  </div>
+</div>
+
+<!-- アラームバナー -->
+<div id="alarmBanner" class="alarm-banner hidden">
+  <span id="alarmMessage">⏰ 時間です！</span>
+  <button id="alarmStopBtn">停止</button>
+</div>
+
+<header class="app-header">
+  <div class="header-inner">
+    <h1 class="app-title">学習管理</h1>
+  </div>
+</header>
+
+<section class="char-hero" id="charHero">
+  <div class="char-hero-glow"></div>
+  <div class="char-hero-stage" id="charHeroStage"></div>
+  <div class="char-hero-info">
+    <div class="char-hero-name" id="headerCharName">未選択</div>
+    <div class="char-hero-form" id="headerCharForm"></div>
+    <div class="stage-bar-wrap">
+      <div class="stage-bar"><div class="stage-bar-fill" id="stageBarFill"></div></div>
+      <span class="stage-label" id="stageLabel">Lv.0/10</span>
+    </div>
+  </div>
+  <div class="evo-burst" id="evoBurst"></div>
+</section>
+
+<nav class="tabs">
+  <div class="tabs-track">
+    <button class="tab-btn active" data-tab="today">今日の学習</button>
+    <button class="tab-btn" data-tab="monthly">月間達成率</button>
+    <button class="tab-btn" data-tab="settings">設定</button>
+    <div class="tabs-indicator" id="tabsIndicator"></div>
+  </div>
+</nav>
+
+<main class="app-main">
+
+  <!-- 今日の学習 -->
+  <section id="tab-today" class="tab-panel active">
+    <div class="card">
+      <h2 id="todayDateLabel">今日の目標</h2>
+      <form id="itemForm" class="item-form">
+        <input type="text" id="itemTitle" placeholder="学習内容（例：英単語暗記）" required>
+        <div class="time-inputs">
+          <input type="number" id="itemGoalH" min="0" max="23" value="0" title="目標時間（時）">
+          <span>時間</span>
+          <input type="number" id="itemGoalM" min="0" max="59" value="30" title="目標時間（分）">
+          <span>分</span>
+        </div>
+        <button type="submit">＋ 追加</button>
+      </form>
+
+      <ul id="itemList" class="item-list"></ul>
+
+      <div class="today-summary" id="todaySummary"></div>
+
+      <button id="finalizeBtn" class="finalize-btn">✅ 今日の記録を確定してキャラクターに反映する</button>
+      <p class="hint">※ 日付が変わると自動的に前日分が確定されます。手動で確定すると、その時点の達成率で反映されます。</p>
+    </div>
+  </section>
+
+  <!-- 月間達成率 -->
+  <section id="tab-monthly" class="tab-panel">
+    <div class="card">
+      <div class="month-nav">
+        <button id="prevMonthBtn">◀ 前月</button>
+        <h2 id="monthLabel">----年--月</h2>
+        <button id="nextMonthBtn">翌月 ▶</button>
+      </div>
+      <table class="monthly-table">
+        <thead><tr><th>日付</th><th>目標(分)</th><th>実績(分)</th><th>達成率</th><th>状態</th></tr></thead>
+        <tbody id="monthlyTableBody"></tbody>
+      </table>
+      <div class="month-avg" id="monthAvg"></div>
+    </div>
+  </section>
+
+  <!-- 設定 -->
+  <section id="tab-settings" class="tab-panel">
+    <div class="card">
+      <h2>キャラクター</h2>
+      <p>現在: <span id="settingsCharInfo"></span></p>
+      <button id="changeCharBtn">キャラクターを変更する（進化は1から）</button>
+    </div>
+
+    <div class="card">
+      <h2>起床・就寝アラーム</h2>
+      <label class="settings-row">
+        <span>起床時間</span>
+        <input type="time" id="wakeTimeInput">
+      </label>
+      <label class="settings-row">
+        <span>就寝時間</span>
+        <input type="time" id="sleepTimeInput">
+      </label>
+      <label class="settings-row checkbox-row">
+        <input type="checkbox" id="alarmEnabledInput">
+        <span>アラームを有効にする</span>
+      </label>
+      <button id="saveSettingsBtn">保存</button>
+      <p class="hint">※ アラームはこのブラウザタブを開いている間のみ鳴ります（バックグラウンド通知はできません）。</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="assets/dragon/dragon-svgs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
