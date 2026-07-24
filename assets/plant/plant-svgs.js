@@ -123,22 +123,35 @@ function plantSvg(stage, uid) {
 
   // ---- テンプレート4：満開（ステージ9〜10） ----
   function bloomTemplate(flowerCount, radiant) {
+    // 揺れるつる（髪のように流れる装飾）
+    const vine = (x, y, len, sway) =>
+      `<path class="cg-sway" style="transform-origin:${x}px ${y}px" d="M${x},${y} Q${x + sway},${y + len * 0.6} ${x + sway * 0.4},${y + len}" fill="none" stroke="url(#${g('trunk')})" stroke-width="4" stroke-linecap="round"/>
+       <ellipse cx="${x + sway * 0.4}" cy="${y + len}" rx="6" ry="4" fill="url(#${g('flower')})"/>`;
     return `
       ${soil}
-      <circle class="cg-glow" cx="150" cy="140" r="${radiant ? 120 : 90}" fill="url(#${g('glow')})" opacity="${radiant ? 0.55 : 0.35}"/>
+      <circle class="cg-glow" cx="150" cy="140" r="${radiant ? 130 : 90}" fill="url(#${g('glow')})" opacity="${radiant ? 0.55 : 0.35}"/>
+      ${radiant ? `
+      <g class="cg-sparkle" style="transform-origin:150px 40px"><circle cx="150" cy="36" r="4" fill="#fff3b0"/></g>
+      <g class="cg-sparkle" style="transform-origin:88px 90px"><circle cx="88" cy="90" r="3" fill="#fff3b0"/></g>
+      <g class="cg-sparkle" style="transform-origin:212px 90px"><circle cx="212" cy="90" r="3" fill="#fff3b0"/></g>` : ''}
       <g class="cg-breathe" style="transform-origin:150px 224px">
+        ${radiant ? `
+        <path d="M112,236 Q150,256 188,236 Q188,250 150,264 Q112,250 112,236 Z" fill="url(#${g('flower')})" opacity="0.9"/>
+        <path d="M120,232 Q150,246 180,232" fill="none" stroke="url(#${g('flower')})" stroke-width="4" opacity="0.6"/>` : ''}
         <path d="M136,254 Q130,196 150,152" fill="none" stroke="url(#${g('trunk')})" stroke-width="18" stroke-linecap="round"/>
         <path d="M150,182 Q174,172 186,152" fill="none" stroke="url(#${g('trunk')})" stroke-width="9" stroke-linecap="round"/>
         <path d="M146,196 Q120,186 108,166" fill="none" stroke="url(#${g('trunk')})" stroke-width="9" stroke-linecap="round"/>
+        ${radiant ? vine(112, 190, 46, -14) + vine(188, 190, 46, 14) : ''}
         <circle cx="150" cy="128" r="52" fill="url(#${g('leaf')})"/>
         <circle cx="102" cy="156" r="32" fill="url(#${g('leaf')})"/>
         <circle cx="198" cy="156" r="32" fill="url(#${g('leaf')})"/>
-        ${flower(150, 96, 14)}
+        ${flower(150, 96, radiant ? 16 : 14)}
         ${flower(96, 140, 12)}
         ${flower(204, 140, 12)}
         ${flowerCount > 3 ? flower(150, 150, 13) : ''}
         ${flowerCount > 3 ? flower(122, 176, 10) : ''}
         ${flowerCount > 3 ? flower(178, 176, 10) : ''}
+        ${radiant ? flower(150, 58, 11) + flower(126, 74, 9) + flower(174, 74, 9) : ''}
         ${eye(134, 126, 10, g('eyeL'))}
         ${eye(166, 126, 10, g('eyeR'))}
         <path d="M140,142 Q150,148 160,142" fill="none" stroke="#2f5a16" stroke-width="2" stroke-linecap="round"/>

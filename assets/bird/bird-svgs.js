@@ -31,9 +31,20 @@ function birdSvg(stage, uid) {
         <stop offset="100%" stop-color="#5c3f1f"/>
       </linearGradient>
       <linearGradient id="${g('owl')}" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#d8c9a3"/>
-        <stop offset="50%" stop-color="#a98a5c"/>
-        <stop offset="100%" stop-color="#6e4f2c"/>
+        <stop offset="0%" stop-color="#f2d9a3"/>
+        <stop offset="50%" stop-color="#d9a95c"/>
+        <stop offset="100%" stop-color="#8a5a2c"/>
+      </linearGradient>
+      <linearGradient id="${g('phoenix')}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fff6d6"/>
+        <stop offset="35%" stop-color="#ffce54"/>
+        <stop offset="70%" stop-color="#ff7a3d"/>
+        <stop offset="100%" stop-color="#e6402a"/>
+      </linearGradient>
+      <linearGradient id="${g('plume')}" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#fffbe6"/>
+        <stop offset="45%" stop-color="#ffb347"/>
+        <stop offset="100%" stop-color="#e6402a"/>
       </linearGradient>
       <radialGradient id="${g('eyeGlow')}" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stop-color="#fffbe6"/>
@@ -126,30 +137,47 @@ function birdSvg(stage, uid) {
       </g>`;
   }
 
-  // ---- テンプレート4：ワシ〜フクロウ（ステージ9〜10） ----
-  function owlTemplate(owlForm, glowOn) {
+  // ---- テンプレート4：ワシ〜鳳凰（ステージ9〜10） ----
+  function phoenixTemplate(phoenixForm, glowOn) {
+    const bodyGrad = phoenixForm ? g('phoenix') : g('owl');
+    // 尾羽・翼を飾る炎のような羽根
+    const plumeFeather = (x1, y1, x2, y2, x3, y3, w) =>
+      `<path d="M${x1},${y1} Q${x2},${y2} ${x3},${y3}" fill="none" stroke="url(#${g('plume')})" stroke-width="${w}" stroke-linecap="round"/>`;
     return `
       ${ground}
-      <circle class="cg-glow" cx="150" cy="150" r="105" fill="url(#${g('glow')})" opacity="${glowOn ? 0.5 : 0.3}"/>
+      <circle class="cg-glow" cx="150" cy="150" r="${phoenixForm ? 130 : 105}" fill="url(#${g('glow')})" opacity="${glowOn ? 0.55 : 0.3}"/>
+      ${phoenixForm ? `
+      <g class="cg-sparkle" style="transform-origin:150px 50px"><circle cx="150" cy="46" r="4" fill="#fff3b0"/></g>
+      <g class="cg-sparkle" style="transform-origin:96px 90px"><circle cx="96" cy="90" r="3" fill="#fff3b0"/></g>
+      <g class="cg-sparkle" style="transform-origin:204px 90px"><circle cx="204" cy="90" r="3" fill="#fff3b0"/></g>` : ''}
       <g class="cg-breathe" style="transform-origin:150px 194px">
+        ${phoenixForm ? `
+        <g class="cg-flicker" style="transform-origin:150px 236px">
+          ${plumeFeather(140, 232, 128, 200, 122, 168, 9)}
+          ${plumeFeather(150, 236, 150, 198, 150, 160, 10)}
+          ${plumeFeather(160, 232, 172, 200, 178, 168, 9)}
+        </g>` : `<path d="M184,234 Q212,240 216,220" fill="none" stroke="url(#${bodyGrad})" stroke-width="11" stroke-linecap="round"/>`}
         <g class="cg-wing-l" style="transform-origin:100px 186px">
-          <path d="M100,186 C50,178 22,198 2,164 C36,168 60,154 84,164 C76,180 88,196 100,208 Z" fill="url(#${owlForm ? g('owl') : g('feather')})" stroke="#4a3018" stroke-width="2"/>
+          <path d="M100,186 C50,178 22,198 2,164 C36,168 60,154 84,164 C76,180 88,196 100,208 Z" fill="url(#${bodyGrad})" stroke="#8a4318" stroke-width="2"/>
+          ${phoenixForm ? plumeFeather(60, 176, 34, 156, 14, 132, 6) + plumeFeather(78, 182, 56, 168, 40, 146, 5) : ''}
         </g>
         <g class="cg-wing-r" style="transform-origin:200px 186px">
-          <path d="M200,186 C250,178 278,198 298,164 C264,168 240,154 216,164 C224,180 212,196 200,208 Z" fill="url(#${owlForm ? g('owl') : g('feather')})" stroke="#4a3018" stroke-width="2"/>
+          <path d="M200,186 C250,178 278,198 298,164 C264,168 240,154 216,164 C224,180 212,196 200,208 Z" fill="url(#${bodyGrad})" stroke="#8a4318" stroke-width="2"/>
+          ${phoenixForm ? plumeFeather(240, 176, 266, 156, 286, 132, 6) + plumeFeather(222, 182, 244, 168, 260, 146, 5) : ''}
         </g>
-        <path d="M184,234 Q212,240 216,220" fill="none" stroke="url(#${owlForm ? g('owl') : g('feather')})" stroke-width="11" stroke-linecap="round"/>
-        <ellipse cx="150" cy="196" rx="60" ry="52" fill="url(#${owlForm ? g('owl') : g('feather')})"/>
+        <ellipse cx="150" cy="196" rx="60" ry="52" fill="url(#${bodyGrad})"/>
         <ellipse cx="150" cy="214" rx="34" ry="26" fill="url(#${g('belly')})"/>
-        <circle cx="150" cy="134" r="46" fill="url(#${owlForm ? g('owl') : g('feather')})"/>
-        ${owlForm ? `
-        <path d="M118,98 L110,74 L134,94 Z" fill="url(#${g('owl')})"/>
-        <path d="M182,98 L190,74 L166,94 Z" fill="url(#${g('owl')})"/>
-        <circle cx="128" cy="128" r="20" fill="#fff8e8"/>
-        <circle cx="172" cy="128" r="20" fill="#fff8e8"/>` : `
+        <circle cx="150" cy="134" r="46" fill="url(#${bodyGrad})"/>
+        ${phoenixForm ? `
+        <path d="M150,88 Q146,58 150,36" fill="none" stroke="url(#${g('plume')})" stroke-width="7" stroke-linecap="round"/>
+        <path d="M134,94 Q122,68 116,48" fill="none" stroke="url(#${g('plume')})" stroke-width="5" stroke-linecap="round"/>
+        <path d="M166,94 Q178,68 184,48" fill="none" stroke="url(#${g('plume')})" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="150" cy="150" rx="20" ry="14" fill="url(#${g('belly')})"/>` : `
+        <path d="M118,98 L110,74 L134,94 Z" fill="url(#${bodyGrad})"/>
+        <path d="M182,98 L190,74 L166,94 Z" fill="url(#${bodyGrad})"/>
         <ellipse cx="150" cy="150" rx="20" ry="14" fill="url(#${g('belly')})"/>`}
-        ${eye(128, 130, owlForm ? 15 : 13, g('eyeL'), owlForm)}
-        ${eye(172, 130, owlForm ? 15 : 13, g('eyeR'), owlForm)}
+        ${eye(128, 130, phoenixForm ? 14 : 13, g('eyeL'), phoenixForm)}
+        ${eye(172, 130, phoenixForm ? 14 : 13, g('eyeR'), phoenixForm)}
         <polygon points="138,144 162,144 150,162" fill="#ffb347" stroke="#a15f2c" stroke-width="1"/>
         <ellipse cx="128" cy="248" rx="10" ry="6" fill="#ffb347"/>
         <ellipse cx="172" cy="248" rx="10" ry="6" fill="#ffb347"/>
@@ -166,10 +194,10 @@ function birdSvg(stage, uid) {
     const idx = stage - 6;
     body = scaleWrap(hawkTemplate([0.6, 0.85, 1][idx], idx === 2), [0.86, 0.94, 1.02][idx], 214);
   } else {
-    body = scaleWrap(owlTemplate(stage === 10, true), stage === 9 ? 0.94 : 1.05, 208);
+    body = scaleWrap(phoenixTemplate(stage === 10, true), stage === 9 ? 0.94 : 1.08, 208);
   }
 
   return `<svg class="creature-svg bird-stage-${stage}" viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ひよこ 進化段階${stage}">${defs}${body}</svg>`;
 }
 
-const BIRD_STAGE_LABELS = ['卵', 'ひびわれた卵', 'ひな', 'ひよこ', '若鳥(羽ばたき)', '若鳥', 'タカの子', 'タカ', 'ワシ', 'フクロウ'];
+const BIRD_STAGE_LABELS = ['卵', 'ひびわれた卵', 'ひな', 'ひよこ', '若鳥(羽ばたき)', '若鳥', 'タカの子', 'タカ', 'ワシ', '鳳凰'];

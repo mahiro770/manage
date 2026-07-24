@@ -43,6 +43,11 @@ function dragonSvg(stage, uid) {
         <stop offset="0%" stop-color="#fff2d6"/>
         <stop offset="100%" stop-color="#d8a45c"/>
       </linearGradient>
+      <linearGradient id="${g('metal')}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#f2f4f8"/>
+        <stop offset="50%" stop-color="#aab2c0"/>
+        <stop offset="100%" stop-color="#5c6474"/>
+      </linearGradient>
       <filter id="${g('soft')}" x="-60%" y="-60%" width="220%" height="220%">
         <feGaussianBlur stdDeviation="4"/>
       </filter>
@@ -60,6 +65,21 @@ function dragonSvg(stage, uid) {
 
   const scaleWrap = (inner, scale, oy) =>
     `<g style="transform:scale(${scale});transform-origin:150px ${oy}px;transform-box:view-box;">${inner}</g>`;
+
+  // 背骨のアーマープレート（機甲竜っぽい装飾）
+  const spinePlates = (points, size) => points.map(([x, y], i) => `
+    <polygon points="${x - size},${y + size * 0.8} ${x},${y - size} ${x + size},${y + size * 0.8}" fill="url(#${g('metal')})" stroke="#3a3f4a" stroke-width="1"/>
+    <polygon points="${x - size * 0.4},${y + size * 0.5} ${x},${y - size * 0.4} ${x + size * 0.4},${y + size * 0.5}" fill="#e8ecf2" opacity="0.7"/>
+  `).join('');
+
+  const browRidge = () => `
+    <path d="M108,108 Q120,96 140,104" fill="none" stroke="url(#${g('metal')})" stroke-width="5" stroke-linecap="round"/>
+    <path d="M192,108 Q180,96 160,104" fill="none" stroke="url(#${g('metal')})" stroke-width="5" stroke-linecap="round"/>`;
+
+  const shoulderPlate = (cx, cy, r) => `
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${g('metal')})" stroke="#3a3f4a" stroke-width="1.5"/>
+    <circle cx="${cx}" cy="${cy}" r="${r * 0.55}" fill="none" stroke="#3a3f4a" stroke-width="1.5" opacity="0.7"/>
+    <circle cx="${cx - r * 0.3}" cy="${cy - r * 0.3}" r="${r * 0.25}" fill="#fff" opacity="0.6"/>`;
 
   // ---- テンプレート1：卵（ステージ1〜2） ----
   function eggTemplate(hatching) {
@@ -121,11 +141,12 @@ function dragonSvg(stage, uid) {
   }
 
   // ---- テンプレート3：若竜（ステージ6〜8） ----
-  function juvenileTemplate(spikesOn) {
+  function juvenileTemplate(spikesOn, armorHint) {
     return `
       ${ground}
       <g class="cg-breathe" style="transform-origin:150px 178px">
         <path class="dr-tail" d="M195,232 Q245,226 252,190 Q262,222 232,246 Q208,256 190,238 Z" fill="url(#${g('scaleBody')})"/>
+        ${armorHint ? shoulderPlate(112, 148, 12) + shoulderPlate(188, 148, 12) : ''}
         <g class="cg-wing-l" id="${g('wingL')}" style="transform-origin:120px 150px">
           <path d="M120,150 C78,132 50,140 30,108 C60,120 82,110 104,120 C96,96 104,80 92,60 C124,74 132,110 128,140 Z"
                 fill="url(#${g('wingMembrane')})" stroke="#9c3720" stroke-width="2"/>
@@ -148,9 +169,11 @@ function dragonSvg(stage, uid) {
         <ellipse cx="150" cy="148" rx="22" ry="15" fill="url(#${g('scaleBelly')})"/>
         <path d="M128,96 L136,76 L146,98 Z" fill="url(#${g('hornGrad')})"/>
         <path d="M172,96 L164,76 L154,98 Z" fill="url(#${g('hornGrad')})"/>
+        ${armorHint ? browRidge() : ''}
         ${eye(128, 122, 13, g('eyeL'))}
         ${eye(172, 122, 13, g('eyeR'))}
         <path d="M138,150 Q150,157 162,150" fill="none" stroke="#7a1f12" stroke-width="2.5" stroke-linecap="round"/>
+        ${armorHint ? spinePlates([[150, 168], [150, 190]], 8) : ''}
       </g>`;
   }
 
@@ -184,18 +207,26 @@ function dragonSvg(stage, uid) {
         <path d="M204,220 Q196,196 172,186" fill="none" stroke="url(#${g('scaleBody')})" stroke-width="14" stroke-linecap="round"/>
         <ellipse cx="150" cy="196" rx="66" ry="60" fill="url(#${g('scaleBody')})"/>
         <ellipse cx="150" cy="216" rx="38" ry="32" fill="url(#${g('scaleBelly')})"/>
+        ${crownHornOn ? spinePlates([[150, 158], [150, 184], [150, 210], [150, 234]], 10) : spinePlates([[150, 168], [150, 196]], 8)}
         <circle cx="150" cy="214" r="4.5" fill="#ffe9c2" opacity="0.85"/>
         <circle cx="136" cy="222" r="3.6" fill="#ffe9c2" opacity="0.8"/>
         <circle cx="164" cy="222" r="3.6" fill="#ffe9c2" opacity="0.8"/>
         <circle cx="150" cy="230" r="3.2" fill="#ffe9c2" opacity="0.75"/>
+        ${shoulderPlate(112, 152, crownHornOn ? 17 : 14)}
+        ${shoulderPlate(188, 152, crownHornOn ? 17 : 14)}
         <polygon points="150,86 160,104 140,104" fill="url(#${g('hornGrad')})"/>
         <path d="M120,102 Q100,80 108,54" fill="none" stroke="url(#${g('hornGrad')})" stroke-width="9" stroke-linecap="round"/>
         <path d="M180,102 Q200,80 192,54" fill="none" stroke="url(#${g('hornGrad')})" stroke-width="9" stroke-linecap="round"/>
         ${crownHornOn ? `<polygon points="150,40 158,58 142,58" fill="url(#${g('hornGrad')})"/>` : ''}
         <ellipse cx="150" cy="126" rx="48" ry="44" fill="url(#${g('scaleBody')})"/>
         <ellipse cx="150" cy="144" rx="22" ry="15" fill="url(#${g('scaleBelly')})"/>
+        ${browRidge()}
         ${eye(128, 118, 13, g('eyeL'))}
         ${eye(172, 118, 13, g('eyeR'))}
+        ${crownHornOn ? `
+        <path d="M110,118 L98,110 M104,128 L90,124" stroke="#fffbe6" stroke-width="1.5" opacity="0.7" stroke-linecap="round"/>
+        <path d="M190,118 L202,110 M196,128 L210,124" stroke="#fffbe6" stroke-width="1.5" opacity="0.7" stroke-linecap="round"/>` : ''}
+        <path d="M132,148 L136,142 L140,148 L146,140 L150,148 L154,140 L160,148 L164,142 L168,148" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
         <path d="M136,146 Q150,154 164,146" fill="none" stroke="#5c1508" stroke-width="2.5" stroke-linecap="round"/>
         ${flameOn ? `
         <g class="cg-flicker" transform="translate(150 156)">
@@ -213,7 +244,7 @@ function dragonSvg(stage, uid) {
     body = scaleWrap(hatchlingTemplate([0, 0.55, 0.85][idx], idx >= 1), [0.82, 0.9, 1][idx], 210);
   } else if (stage <= 8) {
     const idx = stage - 6; // 0,1,2
-    body = scaleWrap(juvenileTemplate(idx >= 1), [0.86, 0.94, 1.02][idx], 200);
+    body = scaleWrap(juvenileTemplate(idx >= 1, idx === 2), [0.86, 0.94, 1.02][idx], 200);
   } else {
     body = scaleWrap(adultTemplate(stage === 9 ? 0.28 : 0.55, stage === 10, stage === 10), stage === 9 ? 0.88 : 1.06, 196);
   }

@@ -30,6 +30,10 @@ function catSvg(stage, uid) {
         <stop offset="0%" stop-color="#f7cf6a"/>
         <stop offset="100%" stop-color="#c9861b"/>
       </linearGradient>
+      <linearGradient id="${g('maneLight')}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fff6d6"/>
+        <stop offset="100%" stop-color="#f0b429"/>
+      </linearGradient>
       <radialGradient id="${g('glow')}" cx="50%" cy="50%" r="50%">
         <stop offset="0%" stop-color="#fff3b0" stop-opacity="0.9"/>
         <stop offset="100%" stop-color="#fff3b0" stop-opacity="0"/>
@@ -132,22 +136,30 @@ function catSvg(stage, uid) {
   }
 
   // ---- テンプレート4：ライオン（ステージ9〜10） ----
-  function lionTemplate(maneScale, crownOn) {
+  function lionTemplate(maneScale, regalOn) {
     return `
       ${ground}
       <circle class="cg-glow" cx="150" cy="150" r="105" fill="url(#${g('glow')})" opacity="0.4"/>
+      ${regalOn ? `
+      <g class="cg-sparkle" style="transform-origin:150px 55px"><circle cx="150" cy="50" r="4" fill="#fff3b0"/></g>
+      <g class="cg-sparkle" style="transform-origin:100px 95px"><circle cx="100" cy="95" r="3" fill="#fff3b0"/></g>
+      <g class="cg-sparkle" style="transform-origin:200px 95px"><circle cx="200" cy="95" r="3" fill="#fff3b0"/></g>` : ''}
       <g class="cg-breathe" style="transform-origin:150px 190px">
         <path d="M204,220 Q248,214 244,176 Q266,212 224,236 Q198,246 190,222 Z" fill="url(#${g('fur')})"/>
+        ${regalOn ? `<path d="M244,176 Q252,160 244,148 Q256,164 250,182 Z" fill="url(#${g('mane')})"/>` : ''}
         <ellipse cx="150" cy="200" rx="68" ry="54" fill="url(#${g('fur')})"/>
         <ellipse cx="150" cy="220" rx="42" ry="28" fill="url(#${g('belly')})"/>
         <ellipse cx="116" cy="250" rx="16" ry="10" fill="url(#${g('fur')})"/>
         <ellipse cx="184" cy="250" rx="16" ry="10" fill="url(#${g('fur')})"/>
         <g style="transform:scale(${maneScale});transform-origin:150px 130px;">
-          ${Array.from({ length: 16 }).map((_, i) => {
-            const a = (Math.PI * 2 * i) / 16;
+          ${Array.from({ length: 20 }).map((_, i) => {
+            const a = (Math.PI * 2 * i) / 20;
+            const flowing = regalOn && Math.sin(a * 3) > 0.3;
+            const len = flowing ? 96 : 74;
             const x1 = 150 + Math.cos(a) * 46, y1 = 130 + Math.sin(a) * 46;
-            const x2 = 150 + Math.cos(a) * 74, y2 = 130 + Math.sin(a) * 74;
-            return `<path d="M${x1},${y1} L${x2},${y2}" stroke="url(#${g('mane')})" stroke-width="14" stroke-linecap="round"/>`;
+            const x2 = 150 + Math.cos(a) * len, y2 = 130 + Math.sin(a) * len + (flowing ? 14 : 0);
+            const strand = regalOn && i % 3 === 0;
+            return `<path d="M${x1},${y1} Q${150 + Math.cos(a) * (len * 0.7)},${130 + Math.sin(a) * (len * 0.7)} ${x2},${y2}" stroke="url(#${strand ? g('maneLight') : g('mane')})" stroke-width="${flowing ? 10 : 14}" stroke-linecap="round"/>`;
           }).join('')}
         </g>
         <circle cx="150" cy="130" r="44" fill="url(#${g('fur')})"/>
@@ -156,7 +168,12 @@ function catSvg(stage, uid) {
         ${eye(172, 126, 12, false, g('eyeR'))}
         <path d="M138,144 Q150,150 162,144" fill="none" stroke="#5a3a1a" stroke-width="2.2" stroke-linecap="round"/>
         ${whiskers(20)}
-        ${crownOn ? `<polygon points="150,74 158,92 142,92" fill="url(#${g('mane')})"/>` : ''}
+        ${regalOn ? `
+        <circle cx="106" cy="140" r="3" fill="#ffe27a" stroke="#c9861b" stroke-width="1"/>
+        <circle cx="194" cy="140" r="3" fill="#ffe27a" stroke="#c9861b" stroke-width="1"/>
+        <path d="M136,80 L150,58 L164,80 Z" fill="url(#${g('mane')})" stroke="#c9861b" stroke-width="1"/>
+        <circle cx="150" cy="70" r="5" fill="#fff5d0" stroke="#c9861b" stroke-width="1.5"/>` : `
+        <polygon points="150,74 158,92 142,92" fill="url(#${g('mane')})"/>`}
       </g>`;
   }
 
